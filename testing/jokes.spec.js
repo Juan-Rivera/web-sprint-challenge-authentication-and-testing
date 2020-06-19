@@ -18,7 +18,7 @@ describe('jokes-router.js', () => {
            
 
             const jokes = await request(server)
-                .get('/api/joke')
+                .get('/api/jokes')
                 .set('Authorization', login.body.token)
                 expect(jokes.status).toBe(200);
         })
