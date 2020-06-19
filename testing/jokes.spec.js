@@ -2,7 +2,7 @@ const request = require('supertest'); // calling it "request" is a common practi
 const server = require('../api/server'); // this is our first red, file doesn't exist yet
 const db = require('../database/dbConfig');
 const Jokes = require('../jokes/jokes-model');
-const axios = require('axios');
+const jokesRouter = require('../jokes/jokes-router');
 
 
 describe('jokes-router.js', () => {
@@ -10,37 +10,25 @@ describe('jokes-router.js', () => {
         it('returns 200 OK', async() =>{
             const register = await request(server)
                 .post('/api/auth/register')
-                .send({ username: 'test5', password: 'pass' })
+                .send({ username: 'test', password: 'pass' })
             
             const login = await request(server)
                 .post('/api/auth/login')
-                .send({ username: 'test5', password: 'pass'})
+                .send({ username: 'test', password: 'pass'})
+           
 
-            const getJokes = await request(server)
+            const jokes = await request(server)
                 .get('/api/joke')
                 .set('Authorization', login.body.token)
-                .then(res => {
-                    expect(res.status).toBe(200);
-                })
-                await db('users').truncate();
+                expect(jokes.status).toBe(200);
         })
 
-        // it('returns all jokes', async() =>{
-        //     const register = await request(server)
-        //     .post('/api/auth/register')
-        //     .send({ username: 'test', password: 'pass' })
-        
-        //     const login = await request(server)
-        //     .post('/api/auth/login')
-        //     .send({ username: 'test', password: 'pass'})
-
-        //     const getJokes = await request(server)
-        //     .get('/api/joke')
-        //     .set('Authorization', login.body.token)
-        //     .then(res => {
-        //         expect(res.body).toBe();
-        //     })
-        // })
+        it('Cant reach without AUTH (so its supposed to give back a 404)', async()=>{
+            const jokes = await request(server)
+            .get('/api/jokes')
+            
+            expect(jokes.status).toBe(401);
+        })
     })
     
 })
